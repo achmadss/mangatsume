@@ -1,14 +1,10 @@
 package com.achmadss.mangatsume.ui.screens.main.browse
 
-import android.util.Log
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
+import androidx.compose.animation.Crossfade
 import androidx.compose.animation.graphics.ExperimentalAnimationGraphicsApi
 import androidx.compose.animation.graphics.res.animatedVectorResource
 import androidx.compose.animation.graphics.res.rememberAnimatedVectorPainter
 import androidx.compose.animation.graphics.vector.AnimatedImageVector
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -34,7 +30,6 @@ import androidx.compose.material.ChipDefaults.filterChipColors
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.FilterChip
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.outlined.Whatshot
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
@@ -42,7 +37,6 @@ import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -85,36 +79,26 @@ class BrowseTab(
 
     private var snackbarJob : Job? = null
 
-    private fun handleAlreadyRunning(
+    private fun showSnackbar(
+        msg: String,
         scope: CoroutineScope,
-        snackbarHostState: SnackbarHostState
+        snackbarHostState: SnackbarHostState,
     ) {
         snackbarJob?.cancel()
         snackbarJob = scope.launch {
-            snackbarHostState.showSnackbar(
-                "Already refreshing"
-            )
+            snackbarHostState.showSnackbar(msg)
         }
     }
 
     @Composable
     override fun TopBar() {
         val snackbarHostState = LocalComposition.current.snackbarHostState
-        val scope = LocalComposition.current.snackbarScope
+        val snackbarScope = LocalComposition.current.snackbarScope
         SearchTopAppBar(
             title = stringResource(id = R.string.label_tab_browse),
             onSearch = {
-
+                showSnackbar(it, snackbarScope, snackbarHostState)
             },
-            actions = {
-                IconButton(onClick = {
-                    viewModel.handleRefresh {
-                        handleAlreadyRunning(scope, snackbarHostState)
-                    }
-                }) {
-                    Icon(imageVector = Icons.Default.Refresh, contentDescription = "")
-                }
-            }
         )
     }
 
@@ -156,7 +140,7 @@ class BrowseTab(
             refreshing = uiState.pullRefresh,
             onRefresh = {
                 viewModel.handleRefresh {
-                    handleAlreadyRunning(scope, snackbarHostState)
+                    showSnackbar("Already Running", scope, snackbarHostState)
                 }
             }
         )
@@ -242,12 +226,9 @@ class BrowseTab(
                 when(uiState.state) {
                     UIState.OnLoading -> LoadingScreen()
                     UIState.OnData -> {
-                        AnimatedContent(
+                        Crossfade(
                             targetState = uiState.selectedTrendingType,
                             label = "",
-                            transitionSpec = {
-                                fadeIn().togetherWith(fadeOut())
-                            }
                         ) { type ->
                             LazyVerticalGrid(
                                 modifier = Modifier

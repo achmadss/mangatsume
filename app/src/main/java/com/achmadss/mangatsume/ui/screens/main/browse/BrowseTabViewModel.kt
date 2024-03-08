@@ -81,7 +81,7 @@ class BrowseTabViewModel @Inject constructor(
             initialLoadSize = 1
         )) {
             createHotPagingSource()
-        }.flow.collect {
+        }.flow.cachedIn(viewModelScope).collect {
             _hotPagingData.value = it
         }
     }
@@ -92,7 +92,7 @@ class BrowseTabViewModel @Inject constructor(
             initialLoadSize = 1
         )) {
             createLatestPagingSource()
-        }.flow.collect {
+        }.flow.cachedIn(viewModelScope).collect {
             _latestPagingData.value = it
         }
     }

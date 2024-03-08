@@ -22,8 +22,6 @@ class BrowseTabLatestPagingSource(
             val nextPageNumber = params.key ?: 1
             val data = fetchData(nextPageNumber)
             val prevKey = if (nextPageNumber == 1) null else nextPageNumber - 1
-            Log.e("LATEST", "data size: ${data.size}")
-            Log.e("LATEST", "load size: ${params.loadSize}")
             val nextKey = if (data.isEmpty()) null else nextPageNumber + 1
             LoadResult.Page(
                 data = data,

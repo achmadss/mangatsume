@@ -3,6 +3,8 @@ package com.achmadss.mangatsume.ui.components
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
@@ -26,6 +28,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import com.achmadss.mangatsume.R
 
 @Composable
@@ -33,7 +36,7 @@ fun SearchTopAppBar(
     modifier: Modifier = Modifier,
     title: String,
     onSearch: (query: String) -> Unit,
-    actions: @Composable () -> Unit,
+    actions: @Composable () -> Unit = { },
 ) {
     var isSearching by remember { mutableStateOf(false) }
     var searchQuery by remember { mutableStateOf("") }
@@ -73,7 +76,6 @@ fun SearchTopAppBar(
                 value = searchQuery,
                 onValueChange = {
                     searchQuery = it
-                    onSearch(searchQuery)
                 },
                 textStyle = MaterialTheme.typography.bodyMedium,
                 placeholder = {
@@ -85,6 +87,14 @@ fun SearchTopAppBar(
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = Color.Transparent,
                     unfocusedBorderColor = Color.Transparent
+                ),
+                keyboardActions = KeyboardActions(
+                    onSearch = {
+                        onSearch(searchQuery)
+                    }
+                ),
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    imeAction = ImeAction.Search
                 ),
                 trailingIcon = {
                     if (searchQuery.isNotEmpty()) {
