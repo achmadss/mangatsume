@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Mangatsume</string>
+
+    <string name="label_tab_library">Library</string>
+    <string name="label_tab_updates">Updates</string>
+    <string name="label_tab_history">History</string>
+    <string name="label_tab_browse">Browse</string>
+
+    <string name="information_empty_library">Your library is empty</string>
+
+    <string name="notification_stop_update">STOP</string>
+
+</resources>
